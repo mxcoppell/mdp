@@ -1,0 +1,48 @@
+version: 2
+
+builds:
+  - main: .
+    binary: md-preview-cli
+    ldflags:
+      - -s -w -X github.com/mxcoppell/md-preview-cli/internal/version.Version={{.Version}}
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    files:
+      - skills/md-preview-cli.md
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+
+homebrew_casks:
+  - repository:
+      owner: mxcoppell
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    name: md-preview-cli
+    homepage: https://github.com/mxcoppell/md-preview-cli
+    description: CLI tool for previewing markdown files in a native window
+    license: MIT
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/md-preview-cli"]
+          end

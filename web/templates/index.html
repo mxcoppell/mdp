@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{.Theme}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Filename}} — md-preview-cli</title>
+    <link rel="stylesheet" href="/static/vendor/github-markdown.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Toolbar (drag region) -->
+    <div id="toolbar" class="toolbar">
+        <div id="drag-region" class="drag-region">
+            <span class="toolbar-filename">{{.Filename}}</span>
+        </div>
+        <div class="toolbar-actions">
+            <button id="search-btn" class="tb-btn" title="Search (Cmd/Ctrl+F or /)"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></button>
+            <button id="theme-toggle" class="tb-btn" title="Toggle theme (T)">&#9680;</button>
+            <button id="close-btn" class="tb-btn tb-close" title="Close (Esc)">&#215;</button>
+        </div>
+    </div>
+
+    <!-- Floating search bar -->
+    <div id="search-bar" class="search-float hidden">
+        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+        <span id="search-count" class="search-count"></span>
+        <button id="search-prev" class="sf-btn" title="Previous (Shift+Enter)">&#9650;</button>
+        <button id="search-next" class="sf-btn" title="Next (Enter)">&#9660;</button>
+        <button id="search-close" class="sf-btn" title="Close (Esc)">&#215;</button>
+    </div>
+
+    <!-- Disconnected banner -->
+    <div id="disconnected-banner" class="disconnected-float hidden">
+        Disconnected &mdash; reconnecting&hellip;
+    </div>
+
+    <!-- Help overlay -->
+    <div id="help-overlay" class="help-overlay hidden">
+        <div class="help-content">
+            <h3>Keyboard Shortcuts</h3>
+            <div class="help-grid">
+                <div class="help-section">
+                    <h4>Navigation</h4>
+                    <div class="help-row"><kbd>j</kbd> / <kbd>k</kbd> Scroll down / up</div>
+                    <div class="help-row"><kbd>Space</kbd> / <kbd>Shift+Space</kbd> Page down / up</div>
+                    <div class="help-row"><kbd>g g</kbd> / <kbd>G</kbd> Top / Bottom</div>
+                    <div class="help-row"><kbd>n</kbd> / <kbd>p</kbd> Next / prev heading</div>
+
+                </div>
+                <div class="help-section">
+                    <h4>View</h4>
+                    <div class="help-row"><kbd>]</kbd> Toggle TOC sidebar</div>
+                    <div class="help-row"><kbd>/</kbd> or <kbd>Cmd+F</kbd> Search</div>
+                    <div class="help-row"><kbd>T</kbd> Cycle theme</div>
+                    <div class="help-row"><kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd> Zoom</div>
+                    <div class="help-row"><kbd>Esc</kbd> Close search / window</div>
+                    <div class="help-row"><kbd>h</kbd> This help</div>
+                </div>
+            </div>
+            <p class="help-dismiss">Press any key to dismiss</p>
+        </div>
+    </div>
+
+    <!-- Mermaid zoom modal -->
+    <div id="mermaid-modal" class="mermaid-modal-backdrop hidden">
+        <div class="mermaid-modal-container">
+            <div class="mermaid-modal-toolbar">
+                <button class="mm-btn" id="mm-zoom-out" title="Zoom out">&#8722;</button>
+                <span id="mm-zoom-level" class="mermaid-modal-zoom-level">100%</span>
+                <button class="mm-btn" id="mm-zoom-in" title="Zoom in">&#43;</button>
+                <button class="mm-btn" id="mm-zoom-fit" title="Fit to view">Fit</button>
+                <button class="mm-btn" id="mm-zoom-reset" title="Reset to 100%">1:1</button>
+                <button class="mm-btn" id="mm-close" title="Close (Esc)">&#215;</button>
+            </div>
+            <div id="mermaid-viewport" class="mermaid-modal-viewport"></div>
+        </div>
+    </div>
+
+    <!-- Main layout -->
+    <div id="main-layout" class="main-layout">
+        <!-- TOC sidebar -->
+        <nav id="toc-sidebar" class="toc-sidebar hidden">
+            <div class="toc-header">Contents</div>
+            <ul id="toc-list" class="toc-list"></ul>
+        </nav>
+
+        <!-- Content area -->
+        <main id="content-area" class="content-area">
+            <article id="content" class="markdown-body">{{.HTML}}</article>
+        </main>
+    </div>
+
+    <!-- Status bar -->
+    <div id="status-bar" class="status-bar">
+        <span id="status-file" class="status-file">{{.FilePath}}</span>
+        <span id="status-info" class="status-info"></span>
+        <span id="status-scroll" class="status-scroll">0%</span>
+    </div>
+
+    <!-- Config injected from server -->
+    <script>
+        window.__CONFIG__ = {
+            theme: "{{.Theme}}",
+            filename: "{{.Filename}}",
+            filePath: "{{.FilePath}}",
+            showTOC: {{.ShowTOC}},
+            hasMath: {{.HasMath}},
+            hasMermaid: {{.HasMermaid}},
+            wordCount: {{.WordCount}},
+            noWatch: {{.NoWatch}},
+            toc: {{.TOC}}
+        };
+    </script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

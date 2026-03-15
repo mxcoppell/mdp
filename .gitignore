@@ -1,0 +1,26 @@
+# Go binary
+bin/
+md-preview-cli
+
+# Build / release
+dist/
+
+# OS files
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Superpowers
+.superpowers/
+docs/
+
+# Go
+*.test
+*.out
+
+# Temp GUI config files
+/tmp/
