@@ -54,6 +54,9 @@ void guiApplyFramelessDirect(void *window) {
     applyFrameless(window);
 }
 
+// Track cascade point across windows so each new one offsets from the last.
+static NSPoint _cascadePoint = {0, 0};
+
 void guiShowWindow(void *window, int width, int height) {
     NSWindow *nsWindow = (NSWindow *)window;
 
@@ -65,7 +68,11 @@ void guiShowWindow(void *window, int width, int height) {
         [nsWindow setFrame:frame display:NO];
     }
 
-    [nsWindow center];
+    // First window centers; subsequent windows cascade from the previous.
+    if (_cascadePoint.x == 0 && _cascadePoint.y == 0) {
+        [nsWindow center];
+    }
+    _cascadePoint = [nsWindow cascadeTopLeftFromPoint:_cascadePoint];
 
     [nsWindow makeKeyAndOrderFront:nil];
     [NSApp activateIgnoringOtherApps:YES];
