@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/dock-icon.png" width="128" height="128" alt="md-preview-cli icon">
+</p>
+
 # md-preview-cli
 
 A CLI tool that renders markdown files in a native frameless macOS window. Designed for terminal-only agents like Claude Code.
