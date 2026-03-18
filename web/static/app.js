@@ -706,6 +706,9 @@
         mermaid.initialize({
             startOnLoad: false,
             theme: effective === 'dark' ? 'dark' : 'default',
+            themeVariables: {
+                background: 'transparent'
+            },
             securityLevel: 'strict',
             logLevel: 'error'
         });
