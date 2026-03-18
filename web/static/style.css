@@ -1018,10 +1018,16 @@ body {
     margin: 16px 0;
     overflow-x: auto;
     padding: 8px;
+    background: transparent;
 }
 
 .math-inline {
     display: inline;
+    background: transparent;
+}
+
+.katex-display, .katex {
+    background: transparent !important;
 }
 
 /* ─── Mermaid ─────────────────────────────────────────── */
@@ -1029,7 +1035,7 @@ body {
     text-align: center;
     margin: 16px 0;
     padding: 16px;
-    background: var(--bg-secondary);
+    background: transparent;
     border-radius: 6px;
     overflow-x: auto;
 }
@@ -1037,6 +1043,10 @@ body {
 .mermaid-placeholder svg {
     max-width: 100%;
     height: auto;
+}
+
+.mermaid-rendered svg > rect:first-child {
+    fill: transparent !important;
 }
 
 /* ─── Search Highlights ───────────────────────────────── */
