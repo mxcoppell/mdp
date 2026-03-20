@@ -198,6 +198,7 @@ func (h *Host) createWindow(cfg Config) (string, error) {
 		TOC:                 toServerTOC(cfg.TOC),
 		Filename:            cfg.Filename,
 		FilePath:            cfg.FilePath,
+		BaseDir:             dirFromFilePath(cfg.FilePath),
 		ShowTOC:             cfg.ShowTOC,
 		HasMath:             cfg.HasMath,
 		HasMermaid:          cfg.HasMermaid,

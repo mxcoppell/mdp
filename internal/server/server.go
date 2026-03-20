@@ -8,6 +8,10 @@ import (
 	"io/fs"
 	"net"
 	"net/http"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -30,6 +34,7 @@ type Config struct {
 	TOC                 []TOCEntry
 	Filename            string
 	FilePath            string
+	BaseDir             string // Directory to serve local files from (empty = no local serving)
 	ShowTOC             bool
 	HasMath             bool
 	HasMermaid          bool
@@ -168,9 +173,33 @@ func (s *Server) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/ws", s.ws.handleWS)
 }
 
+func (s *Server) serveLocalFile(w http.ResponseWriter, r *http.Request) {
+	if s.cfg.BaseDir == "" {
+		http.NotFound(w, r)
+		return
+	}
+
+	cleaned := path.Clean(r.URL.Path)
+	resolved := filepath.Join(s.cfg.BaseDir, filepath.FromSlash(cleaned))
+
+	// Prevent directory traversal outside BaseDir
+	if !strings.HasPrefix(resolved, s.cfg.BaseDir+string(filepath.Separator)) && resolved != s.cfg.BaseDir {
+		http.NotFound(w, r)
+		return
+	}
+
+	info, err := os.Stat(resolved)
+	if err != nil || info.IsDir() {
+		http.NotFound(w, r)
+		return
+	}
+
+	http.ServeFile(w, r, resolved)
+}
+
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		s.serveLocalFile(w, r)
 		return
 	}
 
