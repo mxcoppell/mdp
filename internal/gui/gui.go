@@ -33,6 +33,7 @@ func Run(cfgPath string) error {
 		TOC:        toServerTOC(cfg.TOC),
 		Filename:   cfg.Filename,
 		FilePath:   cfg.FilePath,
+		BaseDir:    dirFromFilePath(cfg.FilePath),
 		ShowTOC:    cfg.ShowTOC,
 		HasMath:    cfg.HasMath,
 		HasMermaid: cfg.HasMermaid,
@@ -152,6 +153,13 @@ func toServerTOC(entries []TOCEntry) []server.TOCEntry {
 		}
 	}
 	return result
+}
+
+func dirFromFilePath(p string) string {
+	if p == "" {
+		return ""
+	}
+	return filepath.Dir(p)
 }
 
 func openBrowser(url string) error {
