@@ -36,12 +36,13 @@ type Host struct {
 
 // WindowEntry tracks a single preview window and its resources.
 type WindowEntry struct {
-	ID       string
-	Filename string
-	FilePath string
-	Webview  webview.WebView
-	Server   *server.Server
-	Cancel   context.CancelFunc // cancels watchers
+	ID        string
+	Filename  string
+	FilePath  string
+	Webview   webview.WebView
+	Server    *server.Server
+	Cancel    context.CancelFunc // cancels watchers
+	KeepOnTop bool               // whether this window floats above all others
 }
 
 // RunHost is the host process entry point. It reads the initial config,
@@ -254,6 +255,28 @@ func (h *Host) createWindow(cfg Config) (string, error) {
 		w.Dispatch(func() {
 			h.CloseWindow(windowID)
 		})
+	})
+
+	// toggleKeepOnTop binding — flips NSFloatingWindowLevel for this window.
+	// Returns the new pinned state so JS can update the button appearance.
+	// All pinned windows share NSFloatingWindowLevel; the most-recently-pinned
+	// one wins the top position because setWindowPinned calls makeKeyAndOrderFront.
+	//
+	// NOTE: webview_go calls binding callbacks synchronously on the macOS main
+	// thread (via WKScriptMessageHandler → CGO, no goroutine wrapping). So we
+	// call setWindowPinned directly — no Dispatch needed, and using
+	// Dispatch+channel would deadlock (main thread blocked waiting on itself).
+	_ = w.Bind("toggleKeepOnTop", func() bool {
+		h.mu.Lock()
+		e := h.windows[windowID]
+		newState := false
+		if e != nil {
+			e.KeepOnTop = !e.KeepOnTop
+			newState = e.KeepOnTop
+			setWindowPinned(w.Window(), newState)
+		}
+		h.mu.Unlock()
+		return newState
 	})
 
 	w.Navigate(url)

@@ -140,6 +140,20 @@ void guiActivateWindow(void *window) {
     [NSApp activateIgnoringOtherApps:YES];
 }
 
+// guiSetWindowPinned sets or clears NSFloatingWindowLevel.
+// When pinning, also brings the window to the front within the floating level
+// so the most-recently-pinned window is always the topmost floater.
+void guiSetWindowPinned(void *window, int pinned) {
+    NSWindow *nsWindow = (NSWindow *)window;
+    if (pinned) {
+        [nsWindow setLevel:NSFloatingWindowLevel];
+        [nsWindow makeKeyAndOrderFront:nil];
+        [NSApp activateIgnoringOtherApps:YES];
+    } else {
+        [nsWindow setLevel:NSNormalWindowLevel];
+    }
+}
+
 // Close an NSWindow directly without going through webview's destructor.
 // webview.Destroy() calls deplete_run_loop_event_queue() which deadlocks
 // when called from within a GCD main queue block (the probe it posts to the
@@ -217,6 +231,14 @@ func resizeWindowBy(windowHandle unsafe.Pointer, dw, dh, shiftX int) {
 
 func activateWindow(windowHandle unsafe.Pointer) {
 	C.guiActivateWindow(windowHandle)
+}
+
+func setWindowPinned(windowHandle unsafe.Pointer, pinned bool) {
+	p := C.int(0)
+	if pinned {
+		p = 1
+	}
+	C.guiSetWindowPinned(windowHandle, p)
 }
 
 func closeWindow(windowHandle unsafe.Pointer) {
