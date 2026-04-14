@@ -480,6 +480,19 @@
     document.getElementById('search-close').addEventListener('click', closeSearch);
     document.getElementById('search-btn').addEventListener('click', openSearch);
 
+    // ─── Keep on Top ─────────────────────────────────────────
+    var pinBtn = document.getElementById('pin-btn');
+
+    function toggleKeepOnTop() {
+        if (typeof window.toggleKeepOnTop !== 'function') return;
+        window.toggleKeepOnTop().then(function(pinned) {
+            pinBtn.classList.toggle('active', pinned);
+            pinBtn.title = pinned ? 'Keep on top — ON (f)' : 'Keep on top (f)';
+        });
+    }
+
+    pinBtn.addEventListener('click', toggleKeepOnTop);
+
     // ─── Toolbar Buttons ──────────────────────────────────────
     document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
     document.getElementById('close-btn').addEventListener('click', function() {
@@ -626,6 +639,9 @@
 
         // Theme
         if (key === 'T') { e.preventDefault(); cycleTheme(); return; }
+
+        // Keep on top
+        if (key === 'f') { e.preventDefault(); toggleKeepOnTop(); return; }
 
         // Zoom
         if (key === '+' || key === '=') { e.preventDefault(); zoomIn(); return; }
