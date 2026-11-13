@@ -519,11 +519,13 @@ body {
     color: #dc3232;
 }
 
-.tb-pin.active {
+.tb-pin.active,
+.tb-wrap.active {
     color: var(--accent-color);
 }
 
-.tb-pin.active:hover {
+.tb-pin.active:hover,
+.tb-wrap.active:hover {
     background: rgba(37, 99, 235, 0.12);
     color: var(--accent-hover);
 }
@@ -878,6 +880,21 @@ body {
     border: none;
     border-radius: 6px;
     margin-bottom: 16px;
+}
+
+/* Line wrap — on by default, toggled via [data-line-wrap="off"] */
+.markdown-body pre,
+.markdown-body pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+[data-line-wrap="off"] .markdown-body pre,
+[data-line-wrap="off"] .markdown-body pre code {
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .markdown-body pre code {

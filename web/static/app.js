@@ -76,6 +76,26 @@
 
     applyTheme();
 
+    // ─── Line Wrap ────────────────────────────────────────────
+    var lineWrap = localStorage.getItem('mdp-line-wrap') !== 'off';
+
+    function applyLineWrap() {
+        document.documentElement.setAttribute('data-line-wrap', lineWrap ? 'on' : 'off');
+        var btn = document.getElementById('wrap-toggle');
+        if (btn) {
+            btn.classList.toggle('active', lineWrap);
+            btn.title = lineWrap ? 'Line wrap — ON (w)' : 'Line wrap — OFF (w)';
+        }
+    }
+
+    function toggleLineWrap() {
+        lineWrap = !lineWrap;
+        localStorage.setItem('mdp-line-wrap', lineWrap ? 'on' : 'off');
+        applyLineWrap();
+    }
+
+    applyLineWrap();
+
     // ─── TOC ──────────────────────────────────────────────────
     function buildTOC(tocData) {
         tocList.textContent = '';
@@ -495,6 +515,7 @@
 
     // ─── Toolbar Buttons ──────────────────────────────────────
     document.getElementById('theme-toggle').addEventListener('click', cycleTheme);
+    document.getElementById('wrap-toggle').addEventListener('click', toggleLineWrap);
     document.getElementById('close-btn').addEventListener('click', function() {
         if (typeof window.closeThisWindow === 'function') {
             window.closeThisWindow();
@@ -639,6 +660,9 @@
 
         // Theme
         if (key === 'T') { e.preventDefault(); cycleTheme(); return; }
+
+        // Line wrap
+        if (key === 'w') { e.preventDefault(); toggleLineWrap(); return; }
 
         // Keep on top
         if (key === 'f') { e.preventDefault(); toggleKeepOnTop(); return; }
